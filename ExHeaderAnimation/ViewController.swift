@@ -98,28 +98,28 @@ extension ViewController: UICollectionViewDelegate {
      * contentOffset.y의 값 = 최상단에 닿으면 0, 시작점이 최상단보다 밑에 있으면 -, 시작점이 최상단보다 위에 있으면 +
      
      * 3가지 상태밖에 없다고 생각
-       1) 아래에서 위로 스크롤 하는 경우
-       2) scrollView가 화면 최상단에 닿은 경우
-       3) 위에서 아래로 스크롤을 하는 경우
+      1) 초기 상태: UIImageView가 지정한 크기만큼 커졌고, 스크롤뷰의 시작점이 최상단보다 아래 존재
+      2) 스크롤 뷰의 시작점이 최상단보다 위에 존재
+      3) 스크롤 뷰의 시작점이 최상단보다 밑에 있고, 스크롤뷰 상단 contentInset이 미리 지정한 UIImageView 높이인, Metric.headerHeight보다 큰 경우
      */
     
     let remainingTopSpacing = abs(scrollView.contentOffset.y)
     let lowerThanTop = scrollView.contentOffset.y < 0
-    let stopExpendHeaderHeight = scrollView.contentOffset.y > -Metric.headerHeight
+    let stopExpandHeaderHeight = scrollView.contentOffset.y > -Metric.headerHeight
     
-    if stopExpendHeaderHeight, lowerThanTop {
-      // 1) 아래에서 위로 스크롤 하는 경우
+    if stopExpandHeaderHeight, lowerThanTop {
+      // 1) 초기 상태: UIImageView가 지정한 크기만큼 커졌고, 스크롤뷰의 시작점이 최상단보다 아래 존재
       collectionView.contentInset = .init(top: remainingTopSpacing, left: 0, bottom: 0, right: 0)
       constraint.constant = remainingTopSpacing
       headerImageView.alpha = remainingTopSpacing / Metric.headerHeight
       view.layoutIfNeeded()
     } else if !lowerThanTop {
-      // 2) scrollView가 화면 최상단에 닿은 경우
+      // 2) 스크롤 뷰의 시작점이 최상단보다 위에 존재
       collectionView.contentInset = .zero
       constraint.constant = 0
       headerImageView.alpha = 0
     } else {
-      // 3) 위에서 아래로 스크롤을 하는 경우
+      // 3) 스크롤 뷰의 시작점이 최상단보다 밑에 있고, 스크롤뷰 상단 contentInset이 미리 지정한 UIImageView 높이인, Metric.headerHeight보다 큰 경우
       constraint.constant = remainingTopSpacing
       headerImageView.alpha = 1
     }
