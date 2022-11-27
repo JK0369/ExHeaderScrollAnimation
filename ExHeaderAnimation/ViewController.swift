@@ -25,10 +25,10 @@ class ViewController: UIViewController {
     view.isScrollEnabled = true
     view.showsHorizontalScrollIndicator = false
     
-    // 2. indicator 숨기기
-    view.showsVerticalScrollIndicator = false
+    // indicator 숨기기
+    view.showsVerticalScrollIndicator = true
     
-    // 3. top의 간격
+    // top의 간격
     view.contentInset = .init(top: Metric.headerHeight, left: 0, bottom: 0, right: 0)
     view.backgroundColor = .clear
     view.clipsToBounds = true
@@ -39,7 +39,7 @@ class ViewController: UIViewController {
   private let headerImageView: UIImageView = {
     let view = UIImageView()
     view.image = UIImage(named: "image")
-    // 1. contentMode를 .scaleAspectFill로
+    // contentMode를 .scaleAspectFill로
     view.clipsToBounds = true
     view.contentMode = .scaleAspectFill
     
@@ -98,9 +98,9 @@ extension ViewController: UICollectionViewDelegate {
      * contentOffset.y의 값 = 최상단에 닿으면 0, 시작점이 최상단보다 밑에 있으면 -, 시작점이 최상단보다 위에 있으면 +
      
      * 3가지 상태밖에 없다고 생각
-      1. 상단으로 스크롤할때
-      2. scrollView가 가장 상단에 닿은 경우
-      3. 밑으로 당길때 - header도 같이 끌어당겨지도록 height값 업데이트
+       1) 아래에서 위로 스크롤 하는 경우
+       2) scrollView가 화면 최상단에 닿은 경우
+       3) 위에서 아래로 스크롤을 하는 경우
      */
     
     let remainingTopSpacing = abs(scrollView.contentOffset.y)
@@ -108,18 +108,18 @@ extension ViewController: UICollectionViewDelegate {
     let stopExpendHeaderHeight = scrollView.contentOffset.y > -Metric.headerHeight
     
     if stopExpendHeaderHeight, lowerThanTop {
-      // 1. 상단으로 스크롤할때
+      // 1) 아래에서 위로 스크롤 하는 경우
       collectionView.contentInset = .init(top: remainingTopSpacing, left: 0, bottom: 0, right: 0)
       constraint.constant = remainingTopSpacing
       headerImageView.alpha = remainingTopSpacing / Metric.headerHeight
       view.layoutIfNeeded()
     } else if !lowerThanTop {
-      // 2. scrollView가 가장 상단에 닿은 경우
+      // 2) scrollView가 화면 최상단에 닿은 경우
       collectionView.contentInset = .zero
       constraint.constant = 0
       headerImageView.alpha = 0
     } else {
-      // 3. 밑으로 당길때 - header도 같이 끌어당겨지도록 height값 업데이트
+      // 3) 위에서 아래로 스크롤을 하는 경우
       constraint.constant = remainingTopSpacing
       headerImageView.alpha = 1
     }
